@@ -1,30 +1,37 @@
-﻿namespace Heltevagten.Characters;
+﻿using System;
 
-/// <summary>
-/// Represents a hero who can heal people.
-/// </summary>
-public class HealingHero : Hero
+namespace Heltevagten.Characters
 {
-    public HealingHero(string name, int maxEnergy)
-        : base(name, maxEnergy)
-    {
-    }
-
     /// <summary>
-    /// Uses the healing hero's signature move.
+    /// Represents a hero who can heal people.
     /// </summary>
-    public override string UseSignatureMove()
+    public class HealingHero : Hero
     {
-        UseEnergy(15);
-        return $"{Name} uses healing powers to help people.";
-    }
+        public HealingHero(string name, int maxEnergy)
+            : base(name, maxEnergy)
+        {
+        }
 
-    /// <summary>
-    /// Heals an injured person.
-    /// </summary>
-    public void Heal()
-    {
-        UseEnergy(10);
-        System.Console.WriteLine($"{Name} heals an injured person.");
+        /// <summary>
+        /// Uses the healing hero's signature move.
+        /// </summary>
+        public override string UseSignatureMove()
+        {
+            UseEnergy(15);
+
+            return Name
+                + " uses healing powers to help people.";
+        }
+
+        /// <summary>
+        /// Heals an injured person.
+        /// </summary>
+        public void Heal()
+        {
+            UseEnergy(10);
+
+            Console.WriteLine(
+                Name + " heals an injured person.");
+        }
     }
 }

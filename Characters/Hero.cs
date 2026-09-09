@@ -1,117 +1,120 @@
 ﻿using System;
 using System.Collections.Generic;
-using Heltevagten.Interfaces;
-using Heltevagten.Models;
 
-namespace Heltevagten.Characters;
-
-/// <summary>
-/// Represents the common base class for all heroes.
-/// </summary>
-public abstract class Hero
+namespace Heltevagten.Characters
 {
     /// <summary>
-    /// Gets the name of the hero.
+    /// Represents the common base class for all heroes.
     /// </summary>
-    public string Name { get; }
-
-    /// <summary>
-    /// Gets the maximum energy of the hero.
-    /// </summary>
-    public int MaxEnergy { get; }
-
-    private int _energy;
-
-    /// <summary>
-    /// Gets the current energy of the hero.
-    /// Energy cannot be changed directly from outside the class.
-    /// </summary>
-    public int Energy => _energy;
-
-    /// <summary>
-    /// Gets or sets whether the hero is available for an incident.
-    /// </summary>
-    public bool IsAvailable { get; internal set; }
-
-    /// <summary>
-    /// Gets the items or equipment carried by the hero.
-    /// </summary>
-    public List<string> Equipment { get; }
-
-    /// <summary>
-    /// Creates a new hero.
-    /// </summary>
-    /// <param name="name">The hero's name.</param>
-    /// <param name="maxEnergy">The maximum energy.</param>
-    protected Hero(string name, int maxEnergy)
+    public abstract class Hero
     {
-        if (string.IsNullOrWhiteSpace(name))
+        /// <summary>
+        /// Gets the name of the hero.
+        /// </summary>
+        public string Name { get; private set; }
+
+        /// <summary>
+        /// Gets the maximum energy of the hero.
+        /// </summary>
+        public int MaxEnergy { get; private set; }
+
+        private int _energy;
+
+        /// <summary>
+        /// Gets the current energy of the hero.
+        /// Energy cannot be changed directly from outside the class.
+        /// </summary>
+        public int Energy
         {
-            throw new ArgumentException("Hero name cannot be empty.");
+            get { return _energy; }
         }
 
-        if (maxEnergy <= 0)
+        /// <summary>
+        /// Gets or sets whether the hero is available.
+        /// </summary>
+        public bool IsAvailable { get; internal set; }
+
+        /// <summary>
+        /// Gets the equipment carried by the hero.
+        /// </summary>
+        public List<string> Equipment { get; private set; }
+
+        /// <summary>
+        /// Creates a new hero.
+        /// </summary>
+        protected Hero(string name, int maxEnergy)
         {
-            throw new ArgumentException("Maximum energy must be greater than zero.");
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException("Hero name cannot be empty.");
+            }
+
+            if (maxEnergy <= 0)
+            {
+                throw new ArgumentException(
+                    "Maximum energy must be greater than zero.");
+            }
+
+            Name = name;
+            MaxEnergy = maxEnergy;
+            _energy = maxEnergy;
+            IsAvailable = true;
+            Equipment = new List<string>();
         }
 
-        Name = name;
-        MaxEnergy = maxEnergy;
-        _energy = maxEnergy;
-        IsAvailable = true;
-        Equipment = new List<string>();
-    }
+        /// <summary>
+        /// Uses the hero's unique signature move.
+        /// </summary>
+        public abstract string UseSignatureMove();
 
-    /// <summary>
-    /// Uses the hero's unique signature move.
-    /// Each concrete hero implements this differently.
-    /// </summary>
-    /// <returns>A description of the signature move.</returns>
-    public abstract string UseSignatureMove();
-
-    /// <summary>
-    /// Uses energy.
-    /// </summary>
-    /// <param name="amount">The amount of energy to use.</param>
-    public void UseEnergy(int amount)
-    {
-        if (amount <= 0)
+        /// <summary>
+        /// Uses energy.
+        /// </summary>
+        public void UseEnergy(int amount)
         {
-            throw new ArgumentException("Energy amount must be greater than zero.");
+            if (amount <= 0)
+            {
+                throw new ArgumentException(
+                    "Energy amount must be greater than zero.");
+            }
+
+            if (amount > _energy)
+            {
+                throw new InvalidOperationException(
+                    Name + " does not have enough energy.");
+            }
+
+            _energy -= amount;
         }
 
-        if (amount > _energy)
+        /// <summary>
+        /// Restores energy to the hero.
+        /// </summary>
+        public void RestoreEnergy(int amount)
         {
-            throw new InvalidOperationException($"{Name} does not have enough energy.");
+            if (amount <= 0)
+            {
+                throw new ArgumentException(
+                    "Energy amount must be greater than zero.");
+            }
+
+            _energy += amount;
+
+            if (_energy > MaxEnergy)
+            {
+                _energy = MaxEnergy;
+            }
         }
 
-        _energy -= amount;
-    }
-
-    /// <summary>
-    /// Restores energy to the hero.
-    /// </summary>
-    /// <param name="amount">The amount of energy to restore.</param>
-    public void RestoreEnergy(int amount)
-    {
-        if (amount <= 0)
+        public override string ToString()
         {
-            throw new ArgumentException("Energy amount must be greater than zero.");
+            return Name
+                + " - Energy: "
+                + Energy
+                + "/"
+                + MaxEnergy
+                + " - Available: "
+                + IsAvailable;
         }
-
-        _energy += amount;
-
-        if (_energy > MaxEnergy)
-        {
-            _energy = MaxEnergy;
-        }
-    }
-
-    /// <summary>
-    /// Returns information about the hero.
-    /// </summary>
-    public override string ToString()
-    {
-        return $"{Name} - Energy: {Energy}/{MaxEnergy} - Available: {IsAvailable}";
     }
 }

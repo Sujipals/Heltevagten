@@ -5,31 +5,30 @@ using Heltevagten.Exceptions;
 using Heltevagten.Interfaces;
 using Heltevagten.Models;
 
-namespace Heltevagten.Strategies;
-
-/// <summary>
-/// Selects the available hero with the highest energy.
-/// </summary>
-public class StrongestHeroStrategy : IDispatchStrategy
+namespace Heltevagten.Strategies
 {
     /// <summary>
     /// Selects the available hero with the highest energy.
     /// </summary>
-    public Hero SelectHero(
-        Incident incident,
-        IEnumerable<Hero> heroes)
+    public class StrongestHeroStrategy : IDispatchStrategy
     {
-        Hero? hero = heroes
-            .Where(h => h.IsAvailable)
-            .OrderByDescending(h => h.Energy)
-            .FirstOrDefault();
-
-        if (hero == null)
+        public Hero SelectHero(
+            Incident incident,
+            IEnumerable<Hero> heroes)
         {
-            throw new NoSuitableHeroFoundException(
-                $"No suitable hero was found for: {incident.Description}");
-        }
+            Hero hero = heroes
+                .Where(h => h.IsAvailable)
+                .OrderByDescending(h => h.Energy)
+                .FirstOrDefault();
 
-        return hero;
+            if (hero == null)
+            {
+                throw new NoSuitableHeroFoundException(
+                    "No suitable hero was found for: "
+                    + incident.Description);
+            }
+
+            return hero;
+        }
     }
 }

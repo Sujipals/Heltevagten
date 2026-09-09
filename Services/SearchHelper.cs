@@ -1,35 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Heltevagten.Services;
-
-/// <summary>
-/// Provides reusable generic search functionality.
-/// </summary>
-public static class SearchHelper
+namespace Heltevagten.Services
 {
     /// <summary>
-    /// Finds the first item that matches the supplied condition.
+    /// Provides reusable generic search functionality.
     /// </summary>
-    /// <typeparam name="T">The type of item being searched.</typeparam>
-    /// <param name="items">The collection to search.</param>
-    /// <param name="predicate">The condition that must be satisfied.</param>
-    /// <returns>The first matching item, or null if no item matches.</returns>
-    public static T? FindFirst<T>(
-        IEnumerable<T> items,
-        Func<T, bool> predicate)
+    public static class SearchHelper
     {
-        foreach (T item in items)
+        /// <summary>
+        /// Finds the first item matching a condition.
+        /// </summary>
+        public static T FindFirst<T>(
+            IEnumerable<T> items,
+            Func<T, bool> predicate)
         {
-            if (predicate(item))
+            foreach (T item in items)
             {
-                return item;
+                if (predicate(item))
+                {
+                    return item;
+                }
             }
-        }
 
-        return default;
+            return default(T);
+        }
     }
 }

@@ -1,43 +1,53 @@
-﻿using Heltevagten.Interfaces;
+﻿using System;
+using Heltevagten.Interfaces;
 
-namespace Heltevagten.Characters;
-
-/// <summary>
-/// Represents a physically strong hero.
-/// </summary>
-public class StrongHero : Hero, ISuperStrong
+namespace Heltevagten.Characters
 {
     /// <summary>
-    /// Gets the strength level of the hero.
+    /// Represents a physically strong hero.
     /// </summary>
-    public int Strength { get; }
-
-    public StrongHero(string name, int maxEnergy, int strength)
-        : base(name, maxEnergy)
+    public class StrongHero : Hero, ISuperStrong
     {
-        if (strength <= 0)
+        /// <summary>
+        /// Gets the strength level.
+        /// </summary>
+        public int Strength { get; private set; }
+
+        public StrongHero(
+            string name,
+            int maxEnergy,
+            int strength)
+            : base(name, maxEnergy)
         {
-            throw new System.ArgumentException("Strength must be greater than zero.");
+            if (strength <= 0)
+            {
+                throw new ArgumentException(
+                    "Strength must be greater than zero.");
+            }
+
+            Strength = strength;
         }
 
-        Strength = strength;
-    }
+        /// <summary>
+        /// Uses the strong hero's signature move.
+        /// </summary>
+        public override string UseSignatureMove()
+        {
+            UseEnergy(25);
 
-    /// <summary>
-    /// Uses the strong hero's signature move.
-    /// </summary>
-    public override string UseSignatureMove()
-    {
-        UseEnergy(25);
-        return $"{Name} uses incredible strength to solve the problem.";
-    }
+            return Name
+                + " uses incredible strength to solve the problem.";
+        }
 
-    /// <summary>
-    /// Lifts a heavy object.
-    /// </summary>
-    public void LiftHeavyObject()
-    {
-        UseEnergy(15);
-        System.Console.WriteLine($"{Name} lifts a heavy object.");
+        /// <summary>
+        /// Lifts a heavy object.
+        /// </summary>
+        public void LiftHeavyObject()
+        {
+            UseEnergy(15);
+
+            Console.WriteLine(
+                Name + " lifts a heavy object.");
+        }
     }
 }
