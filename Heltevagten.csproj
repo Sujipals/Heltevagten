@@ -43,11 +43,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Characters\FlyingHero.cs" />
+    <Compile Include="Characters\HealingHero.cs" />
+    <Compile Include="Characters\Hero.cs" />
+    <Compile Include="Characters\StrongHero.cs" />
+    <Compile Include="Exceptions\HeroUnavailableException.cs" />
+    <Compile Include="Exceptions\NoSuitableHeroFoundException.cs" />
+    <Compile Include="Interfaces\IDispatchStrategy.cs" />
+    <Compile Include="Interfaces\IFlyable.cs" />
+    <Compile Include="Interfaces\ISuperStrong.cs" />
+    <Compile Include="Models\Incident.cs" />
+    <Compile Include="Models\Severity.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\DispatchCenter.cs" />
+    <Compile Include="Services\SearchHelper.cs" />
+    <Compile Include="Strategies\FirstAvailableStrategy.cs" />
+    <Compile Include="Strategies\StrongestHeroStrategy.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
