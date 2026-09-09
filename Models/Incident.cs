@@ -1,7 +1,8 @@
-﻿namespace Heltevagten.Models
+﻿
+namespace Heltevagten.Models
 {
     /// <summary>
-    /// Represents an incident reported to Heltevagten.
+    /// Represents an emergency incident reported to Heltevagten.
     /// </summary>
     public class Incident
     {
@@ -11,28 +12,35 @@
 
         public Severity Severity { get; private set; }
 
-        public bool IsResolved { get; private set; }
+        public IncidentStatus Status { get; private set; }
 
         public string AssignedHeroName { get; private set; }
+        public HeroSpecialty RequiredSpecialty { get; private set; }
 
         public Incident(
             string description,
             string location,
-            Severity severity)
+            Severity severity,
+            HeroSpecialty requiredSpecialty)
         {
             Description = description;
             Location = location;
             Severity = severity;
-            IsResolved = false;
+            RequiredSpecialty = requiredSpecialty;
+
+            // Every new incident starts as Open.
+            Status = IncidentStatus.Open;
+
             AssignedHeroName = null;
         }
 
         /// <summary>
-        /// Assigns a hero to the incident.
+        /// Assigns a hero and changes the incident to InProgress.
         /// </summary>
         public void AssignHero(string heroName)
         {
             AssignedHeroName = heroName;
+            Status = IncidentStatus.InProgress;
         }
 
         /// <summary>
@@ -40,7 +48,7 @@
         /// </summary>
         public void Resolve()
         {
-            IsResolved = true;
+            Status = IncidentStatus.Resolved;
         }
 
         public override string ToString()
@@ -50,8 +58,13 @@
                 + Location
                 + " | Severity: "
                 + Severity
-                + " | Resolved: "
-                + IsResolved;
+                + " | Required: "
+                + RequiredSpecialty
+                + " | Status: "
+                + Status
+                + " | Hero: "
+                + (AssignedHeroName ?? "None");
         }
     }
 }
+

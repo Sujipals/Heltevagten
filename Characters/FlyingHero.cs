@@ -1,5 +1,6 @@
-﻿using System;
-using Heltevagten.Interfaces;
+﻿using Heltevagten.Interfaces;
+using Heltevagten.Models;
+using System;
 
 namespace Heltevagten.Characters
 {
@@ -9,7 +10,7 @@ namespace Heltevagten.Characters
     public class FlyingHero : Hero, IFlyable
     {
         public FlyingHero(string name, int maxEnergy)
-            : base(name, maxEnergy)
+            : base(name, maxEnergy, HeroSpecialty.Rescue)
         {
         }
 

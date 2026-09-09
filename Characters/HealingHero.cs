@@ -1,4 +1,5 @@
 ﻿using System;
+using Heltevagten.Models;
 
 namespace Heltevagten.Characters
 {
@@ -8,7 +9,7 @@ namespace Heltevagten.Characters
     public class HealingHero : Hero
     {
         public HealingHero(string name, int maxEnergy)
-            : base(name, maxEnergy)
+            : base(name, maxEnergy, HeroSpecialty.Medical)
         {
         }
 

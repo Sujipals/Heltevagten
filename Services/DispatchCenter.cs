@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using Heltevagten.Characters;
 using Heltevagten.Exceptions;
@@ -8,43 +9,58 @@ using Heltevagten.Models;
 namespace Heltevagten.Services
 {
     /// <summary>
-    /// Represents the central system that manages heroes and incidents.
+    /// Manages heroes and incidents in the Heltevagten system.
     /// </summary>
     public class DispatchCenter
     {
         private readonly List<Hero> _heroes;
         private readonly List<Incident> _incidents;
-        private readonly IDispatchStrategy _dispatchStrategy;
 
-        /// <summary>
-        /// Creates a dispatch center.
-        /// </summary>
+        // The strategy can be changed while the program is running.
+        private IDispatchStrategy _dispatchStrategy;
+
         public DispatchCenter(
             IDispatchStrategy dispatchStrategy)
         {
+            if (dispatchStrategy == null)
+            {
+                throw new ArgumentNullException(
+                    "dispatchStrategy");
+            }
+
             _dispatchStrategy = dispatchStrategy;
+
             _heroes = new List<Hero>();
             _incidents = new List<Incident>();
         }
 
-        /// <summary>
-        /// Gets all registered heroes.
-        /// </summary>
         public IReadOnlyList<Hero> Heroes
         {
             get { return _heroes; }
         }
 
-        /// <summary>
-        /// Gets all registered incidents.
-        /// </summary>
         public IReadOnlyList<Incident> Incidents
         {
             get { return _incidents; }
         }
 
         /// <summary>
-        /// Registers a hero.
+        /// Changes the strategy used to select heroes.
+        /// </summary>
+        public void ChangeStrategy(
+            IDispatchStrategy strategy)
+        {
+            if (strategy == null)
+            {
+                throw new ArgumentNullException(
+                    "strategy");
+            }
+
+            _dispatchStrategy = strategy;
+        }
+
+        /// <summary>
+        /// Adds a hero to the dispatch center.
         /// </summary>
         public void RegisterHero(Hero hero)
         {
@@ -56,17 +72,19 @@ namespace Heltevagten.Services
             _heroes.Add(hero);
 
             Console.WriteLine(
-                "Hero registered: " + hero.Name);
+                "Hero registered: "
+                + hero.Name);
         }
 
         /// <summary>
-        /// Reports an incident.
+        /// Adds a new incident to the system.
         /// </summary>
         public void ReportIncident(Incident incident)
         {
             if (incident == null)
             {
-                throw new ArgumentNullException("incident");
+                throw new ArgumentNullException(
+                    "incident");
             }
 
             _incidents.Add(incident);
@@ -77,29 +95,59 @@ namespace Heltevagten.Services
         }
 
         /// <summary>
-        /// Dispatches a suitable hero.
+        /// Selects and dispatches an available hero.
         /// </summary>
         public Hero DispatchHero(Incident incident)
         {
             if (incident == null)
             {
-                throw new ArgumentNullException("incident");
+                throw new ArgumentNullException(
+                    "incident");
             }
 
-            Hero hero = _dispatchStrategy.SelectHero(
-                incident,
-                _heroes);
+            // An already resolved incident cannot be dispatched.
+            if (incident.Status ==
+                IncidentStatus.Resolved)
+            {
+                throw new InvalidOperationException(
+                    "A resolved incident cannot be dispatched.");
+            }
+
+            // An incident that already has a hero cannot
+            // receive another hero.
+            if (incident.Status ==
+                IncidentStatus.InProgress)
+            {
+                throw new InvalidOperationException(
+                    "This incident already has a hero.");
+            }
+
+            Hero hero =
+                _dispatchStrategy.SelectHero(
+                    incident,
+                    _heroes);
+
+            if (hero == null)
+            {
+                throw new NoSuitableHeroFoundException(
+                    "No suitable hero was found.");
+            }
 
             if (!hero.IsAvailable)
             {
                 throw new HeroUnavailableException(
-                    hero.Name + " is already busy.");
+                    hero.Name
+                    + " is already busy.");
             }
 
+            // The hero becomes unavailable.
             hero.IsAvailable = false;
 
+            // Assigning the hero also changes
+            // the incident status to InProgress.
             incident.AssignHero(hero.Name);
 
+            Console.WriteLine();
             Console.WriteLine(
                 hero.Name
                 + " has been dispatched to: "
@@ -112,7 +160,7 @@ namespace Heltevagten.Services
         }
 
         /// <summary>
-        /// Resolves an incident and executes a callback.
+        /// Resolves an incident after a hero has been assigned.
         /// </summary>
         public void ResolveIncident(
             Incident incident,
@@ -120,30 +168,53 @@ namespace Heltevagten.Services
         {
             if (incident == null)
             {
-                throw new ArgumentNullException("incident");
+                throw new ArgumentNullException(
+                    "incident");
             }
 
             if (onResolved == null)
             {
-                throw new ArgumentNullException("onResolved");
+                throw new ArgumentNullException(
+                    "onResolved");
+            }
+
+            // The incident must have a hero first.
+            if (incident.Status ==
+                IncidentStatus.Open)
+            {
+                throw new InvalidOperationException(
+                    "The incident must have a hero "
+                    + "before it can be resolved.");
+            }
+
+            // Prevent resolving the same incident twice.
+            if (incident.Status ==
+                IncidentStatus.Resolved)
+            {
+                throw new InvalidOperationException(
+                    "This incident is already resolved.");
             }
 
             incident.Resolve();
 
-            if (incident.AssignedHeroName != null)
-            {
-                Hero hero = SearchHelper.FindFirst(
-                    _heroes,
-                    h => h.Name == incident.AssignedHeroName);
+            // Find the hero who was assigned to the incident.
+            Hero hero = SearchHelper.FindFirst(
+                _heroes,
+                h => h.Name ==
+                     incident.AssignedHeroName);
 
-                if (hero != null)
-                {
-                    hero.IsAvailable = true;
-                    hero.RestoreEnergy(20);
-                }
+            if (hero != null)
+            {
+                // The hero becomes available again.
+                hero.IsAvailable = true;
+
+                // Give the hero some energy back.
+                hero.RestoreEnergy(20);
             }
 
+            // Execute the callback.
             onResolved(incident);
         }
     }
 }
+

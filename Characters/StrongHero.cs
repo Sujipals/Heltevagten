@@ -1,5 +1,6 @@
 ﻿using System;
 using Heltevagten.Interfaces;
+using Heltevagten.Models;
 
 namespace Heltevagten.Characters
 {
@@ -17,7 +18,7 @@ namespace Heltevagten.Characters
             string name,
             int maxEnergy,
             int strength)
-            : base(name, maxEnergy)
+            : base(name, maxEnergy, HeroSpecialty.Strength)
         {
             if (strength <= 0)
             {

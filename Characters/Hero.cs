@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Heltevagten.Models;
 
 namespace Heltevagten.Characters
 {
@@ -18,6 +19,7 @@ namespace Heltevagten.Characters
         /// </summary>
         public int MaxEnergy { get; private set; }
 
+        public HeroSpecialty Specialty { get; private set; }
         private int _energy;
 
         /// <summary>
@@ -42,7 +44,7 @@ namespace Heltevagten.Characters
         /// <summary>
         /// Creates a new hero.
         /// </summary>
-        protected Hero(string name, int maxEnergy)
+        protected Hero(string name, int maxEnergy, HeroSpecialty specialty)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -57,6 +59,7 @@ namespace Heltevagten.Characters
 
             Name = name;
             MaxEnergy = maxEnergy;
+            Specialty = specialty;
             _energy = maxEnergy;
             IsAvailable = true;
             Equipment = new List<string>();
