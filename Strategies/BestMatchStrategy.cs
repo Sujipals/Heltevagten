@@ -11,7 +11,7 @@ namespace Heltevagten.Strategies
     /// <summary>
     /// Selects an available hero whose specialty
     /// matches the incident.
-    /// </summary>
+    /// </summary>sav
     public class BestMatchStrategy : IDispatchStrategy
     {
         public Hero SelectHero(
