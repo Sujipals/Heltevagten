@@ -5,11 +5,15 @@ namespace Heltevagten.Characters
 {
     /// <summary>
     /// Represents a hero who can heal people.
+    /// HealingHero inherits common functionality from Hero.
     /// </summary>
     public class HealingHero : Hero
     {
-        public HealingHero(string name, int maxEnergy)
-            : base(name, maxEnergy, HeroSpecialty.Medical)
+        /// <summary> 
+        /// Creates a new HealingHero.
+        /// </summary>
+        public HealingHero(string name, int maxEnergy)// Calls the Hero constructor.
+            : base(name, maxEnergy, HeroSpecialty.Medical)// This hero has the Medical specialty.
         {
         }
 
@@ -18,9 +22,9 @@ namespace Heltevagten.Characters
         /// </summary>
         public override string UseSignatureMove()
         {
-            UseEnergy(15);
+            UseEnergy(15);// The signature move costs 15 energy.
 
-            return Name
+            return Name// Return a description of the action.
                 + " uses healing powers to help people.";
         }
 
@@ -29,8 +33,9 @@ namespace Heltevagten.Characters
         /// </summary>
         public void Heal()
         {
-            UseEnergy(10);
+            UseEnergy(10);// Healing costs 10 energy.
 
+            // Display a message showing that the hero healed someone.
             Console.WriteLine(
                 Name + " heals an injured person.");
         }
